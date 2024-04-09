@@ -21,14 +21,13 @@ namespace GUI
 	inline std::vector<Shortcut> shortcuts;
 	inline std::vector<WindowAction*> windowActions;
 	inline std::string currentShortcut = "";
+	inline std::string searchBar = "";
 	inline json windowPositions;
 
 	inline bool isVisible = false;
 	inline bool shortcutLoop = false;
 	inline bool toggled = false;
-
 	inline bool hasLateInit = false;
-
 	inline bool canToggle = false;
 
 	inline float hideTimer = 0.0f;

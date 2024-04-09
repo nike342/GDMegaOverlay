@@ -7,6 +7,7 @@ using namespace geode::prelude;
 #include "ConstData.h"
 #define IMGUI_DEFINE_MATH_OPERATORS
 #include <imgui-cocos.hpp>
+#include <misc/cpp/imgui_stdlib.h>
 #include <nlohmann/json.hpp>
 #include <filesystem>
 #include <fstream>
@@ -57,7 +58,7 @@ void initGUI()
 	
 	GUI::Window generalWindow("General", [] {
 		float framerate = Settings::get<float>("general/fps/value", 60.f);
-		if (GUI::inputFloat("##FPSValue", &framerate))
+		if (GUI::inputFloat("##FPSValue", &framerate, 1.f, 100000.f))
 			Mod::get()->setSavedValue<float>("general/fps/value", framerate);
 
 		if (GUI::shouldRender())
@@ -75,7 +76,7 @@ void initGUI()
 			ImGui::BeginDisabled();
 
 		float tps = Settings::get<float>("general/tps/value", 240.f);
-		if (GUI::inputFloat("##TPSValue", &tps, 1.f, 10000.f))
+		if (GUI::inputFloat("##TPSValue", &tps, 1.f, 100000.f))
 			Mod::get()->setSavedValue<float>("general/tps/value", tps);
 
 		if (GUI::shouldRender())
@@ -436,6 +437,9 @@ void initGUI()
 		if (GUI::hotkey("Toggle Menu", &togglekey))
 			Mod::get()->setSavedValue<int>("menu/togglekey", togglekey);
 
+		if(GUI::shouldRender())
+			ImGui::InputText("Search", &GUI::searchBar);
+
 		if (GUI::button("Open Resources Folder"))
 			ShellExecute(0, NULL, string::wideToUtf8(Mod::get()->getResourcesDir().wstring()).c_str(), NULL, NULL, SW_SHOW);
 		if (GUI::button("Open Save Folder"))
@@ -450,6 +454,7 @@ void initGUI()
 	GUI::Window playerWindow("Player", [] { 
 		JsonPatches::drawFromPatches(JsonPatches::player);
 		
+		GUI::checkbox("Show Trajectory", "player/show_trajectory/enabled");
 		GUI::checkbox("Custom Wave Trail", "player/trail/enabled");
 
 		GUI::arrowButton("Wave Customization");

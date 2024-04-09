@@ -4,6 +4,7 @@
 #include "../JsonPatches/JsonPatches.h"
 #include "../Settings.hpp"
 #include "Hacks/SafeMode.h"
+#include "Hacks/ShowTrajectory.h"
 #include "Macrobot/Macrobot.h"
 
 #include <Geode/modify/PlayLayer.hpp>
@@ -338,6 +339,9 @@ class $modify(PlayerObject)
 {
 	void pushButton(PlayerButton btn)
 	{
+		if(ShowTrajectory::isSimulation)
+			return PlayerObject::pushButton(btn);
+
 		if (!clickRegistered)
 		{
 			clicks.push_back(GetTickCount());
@@ -352,7 +356,9 @@ class $modify(PlayerObject)
 
 	void releaseButton(PlayerButton btn)
 	{
-		click = false;
+		if(!ShowTrajectory::isSimulation)
+			click = false;
+		
 		PlayerObject::releaseButton(btn);
 	}
 };

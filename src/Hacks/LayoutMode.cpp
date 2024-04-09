@@ -129,7 +129,7 @@ class $modify(ShaderLayer)
 
 class $modify(EffectGameObject)
 {
-	void triggerObject(GJBaseGameLayer* p0, int p1, gd::vector<int> const* p2)
+	bool triggerObject(GJBaseGameLayer* p0, int p1, gd::vector<int> const* p2)
 	{
 		if (!Settings::get<bool>("level/layout_mode", false))
 			return EffectGameObject::triggerObject(p0, p1, p2);
@@ -137,7 +137,7 @@ class $modify(EffectGameObject)
 		int id = this->m_objectID;
 
 		if (id == 899 || id == 1006 || id == 1007 || id == 105 || id == 29 || id == 56 || id == 915 || id == 30 || id == 58)
-			return;
+			return false;
 
 		EffectGameObject::triggerObject(p0, p1, p2);
 	}

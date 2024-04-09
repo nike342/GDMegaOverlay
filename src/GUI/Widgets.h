@@ -51,4 +51,6 @@ namespace GUI
 	void tooltip(const std::string);
 
 	bool customCheckbox(const char* label, bool* v);
+
+	bool handleSearch(const std::string& label, const std::function<bool()>& function);
 };

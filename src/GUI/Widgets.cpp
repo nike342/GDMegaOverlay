@@ -21,11 +21,22 @@ inline ImVec2 operator-(const ImVec2& a, const ImVec2& b)
 	return {a.x - b.x, a.y - b.y};
 }
 
+bool findStringCaseInsensitive(const std::string& strHaystack, const std::string& strNeedle)
+{
+	auto it = std::search(strHaystack.begin(), strHaystack.end(), strNeedle.begin(), strNeedle.end(),
+						  [](char ch1, char ch2) { return std::toupper(ch1) == std::toupper(ch2); });
+	return (it != strHaystack.end());
+}
+
 bool GUI::button(const std::string& name)
 {
 	bool result = false;
 	if (GUI::shouldRender())
-		result = ImGui::Button(name.c_str());
+	{
+		result = handleSearch(name, [&]()->bool {
+			return ImGui::Button(name.c_str());
+		});
+	}
 
 	if (!result)
 		result = GUI::Shortcut::handleShortcut(name);
@@ -37,7 +48,11 @@ bool GUI::checkbox(const std::string& name, bool* value)
 {
 	bool result = false;
 	if (GUI::shouldRender())
-		result = customCheckbox(name.c_str(), value);
+	{
+		result = handleSearch(name, [&]()->bool {
+			return customCheckbox(name.c_str(), value);
+		});
+	}
 
 	if (!result)
 	{
@@ -57,7 +72,11 @@ bool GUI::checkbox(const std::string& name, const std::string& settingName, bool
 	bool value = Settings::get<bool>(settingName, default_value);
 
 	if (GUI::shouldRender())
-		result = customCheckbox(name.c_str(), &value);
+	{
+		result = handleSearch(name, [&]()->bool {
+			return customCheckbox(name.c_str(), &value);
+		});
+	}
 
 	if (!result)
 	{
@@ -250,7 +269,9 @@ bool GUI::combo(const std::string& name, int* value, const char* const items[], 
 		return false;
 
 	GUI::pushItemWidth(80);
-	bool result = ImGui::Combo(name.c_str(), value, items, itemsCount);
+	bool result = handleSearch(name, [&]()->bool {
+			return ImGui::Combo(name.c_str(), value, items, itemsCount);
+	});
 	GUI::popItemWidth();
 	return result;
 }
@@ -261,7 +282,9 @@ bool GUI::inputInt(const std::string& name, int* value, int min, int max)
 	if (GUI::shouldRender())
 	{
 		GUI::pushItemWidth(50);
-		result = ImGui::InputInt(name.c_str(), value, 0);
+		result = handleSearch(name, [&]()->bool {
+			return ImGui::InputInt(name.c_str(), value, 0);
+		});
 		GUI::popItemWidth();
 	}
 
@@ -279,7 +302,9 @@ bool GUI::inputText(const std::string& name, std::string* value, float width)
 	if (GUI::shouldRender())
 	{
 		GUI::pushItemWidth(width);
-		result = ImGui::InputText(name.c_str(), value);
+		result = handleSearch(name, [&]()->bool {
+			return ImGui::InputText(name.c_str(), value);
+		});
 		GUI::popItemWidth();
 	}
 
@@ -292,7 +317,9 @@ bool GUI::inputInt2(const std::string& name, int* value, int min1, int max1, int
 	if (GUI::shouldRender())
 	{
 		GUI::pushItemWidth(90);
-		result = ImGui::InputInt2(name.c_str(), value, 0);
+		result = handleSearch(name, [&]()->bool {
+			return ImGui::InputInt2(name.c_str(), value);
+		});
 		GUI::popItemWidth();
 	}
 
@@ -315,7 +342,9 @@ bool GUI::inputFloat2(const std::string& name, float* value, float min1, float m
 	if (GUI::shouldRender())
 	{
 		GUI::pushItemWidth(90);
-		result = ImGui::InputFloat2(name.c_str(), value, 0);
+		result = handleSearch(name, [&]()->bool {
+			return ImGui::InputFloat2(name.c_str(), value);
+		});
 		GUI::popItemWidth();
 	}
 
@@ -338,7 +367,9 @@ bool GUI::inputFloat(const std::string& name, float* value, float min, float max
 	if (GUI::shouldRender())
 	{
 		GUI::pushItemWidth(50);
-		result = ImGui::InputFloat(name.c_str(), value);
+		result = handleSearch(name, [&]()->bool {
+			return ImGui::InputFloat(name.c_str(), value);
+		});
 		GUI::popItemWidth();
 	}
 
@@ -382,7 +413,9 @@ bool GUI::dragInt(const std::string& name, int* value, int min, int max)
 	if (GUI::shouldRender())
 	{
 		GUI::pushItemWidth(50);
-		result = ImGui::DragInt(name.c_str(), value);
+		result = handleSearch(name, [&]()->bool {
+			return ImGui::DragInt(name.c_str(), value);
+		});
 		GUI::popItemWidth();
 	}
 
@@ -400,7 +433,9 @@ bool GUI::dragFloat(const std::string& name, float* value, float min, float max)
 	if (GUI::shouldRender())
 	{
 		GUI::pushItemWidth(50);
-		result = ImGui::DragFloat(name.c_str(), value);
+		result = handleSearch(name, [&]()->bool {
+			return ImGui::DragFloat(name.c_str(), value);
+		});
 		GUI::popItemWidth();
 	}
 
@@ -417,14 +452,13 @@ bool GUI::colorEdit(const std::string& name, float* color, bool inputs, bool alp
 	if (!GUI::shouldRender())
 		return false;
 
-	bool result = false;
-
-	if (alpha)
-		result = ImGui::ColorEdit4(name.c_str(), color, inputs ? 0 : ImGuiColorEditFlags_NoInputs);
-	else
-		result = ImGui::ColorEdit3(name.c_str(), color, inputs ? 0 : ImGuiColorEditFlags_NoInputs);
-
-	return result;
+	return handleSearch(name, [&]()->bool
+	{
+		if (alpha)
+			return ImGui::ColorEdit4(name.c_str(), color, inputs ? 0 : ImGuiColorEditFlags_NoInputs);
+		
+		return ImGui::ColorEdit3(name.c_str(), color, inputs ? 0 : ImGuiColorEditFlags_NoInputs);
+	});
 }
 
 void GUI::marker(const std::string& title, const std::string& description)
@@ -572,4 +606,17 @@ void GUI::tooltip(const std::string tooltip)
 {
 	if(ImGui::IsItemHovered())
 		ImGui::SetTooltip(tooltip.c_str());
+}
+
+bool GUI::handleSearch(const std::string& label, const std::function<bool()>& function)
+{
+	if(searchBar.size() > 0 && !findStringCaseInsensitive(label, searchBar))
+	{
+		ImGui::BeginDisabled();
+		bool res = function();
+		ImGui::EndDisabled();
+		return res;
+	}
+
+	return function();
 }

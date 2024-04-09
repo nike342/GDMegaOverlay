@@ -39,7 +39,7 @@ void Common::calculateFramerate()
 	else
 		framerate = GameManager::get()->m_customFPSTarget;// MBO(float, gameManager, 900);
 
-	if (framerate < 60.f)
+	if (framerate < 60.f || framerate > 100000.f)
 		framerate = 60.f;
 
 	cocos2d::CCDirector::sharedDirector()->setAnimationInterval(1.f / framerate);

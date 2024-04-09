@@ -17,6 +17,9 @@ class $modify(CCScheduler)
 		float speedhack =
 		Settings::get<bool>("general/speedhack/enabled") ? Settings::get<float>("general/speedhack/value") : 1.f;
 
+		if(speedhack <= 0)
+			speedhack = 1.f;
+
 		dt *= speedhack;
 
 		if (Record::recorder.m_recording)

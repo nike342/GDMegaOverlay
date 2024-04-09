@@ -178,6 +178,8 @@ void GUI::toggle()
 
 	isVisible = true;
 	toggled = !toggled;
+																											//isPaused
+	cocos2d::CCEGLView::sharedOpenGLView()->showCursor(toggled || !PlayLayer::get() || (PlayLayer::get() && MBO(bool, PlayLayer::get(), 0x2F17)));
 
 	// 🔥🔥🔥🔥
 	hideTimer = toggled ? -FLT_MAX : 0;
