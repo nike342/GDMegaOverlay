@@ -179,7 +179,7 @@ void GUI::toggle()
 	isVisible = true;
 	toggled = !toggled;
 																											//isPaused
-	cocos2d::CCEGLView::sharedOpenGLView()->showCursor(toggled || !PlayLayer::get() || (PlayLayer::get() && MBO(bool, PlayLayer::get(), 0x2F17)));
+	cocos2d::CCEGLView::sharedOpenGLView()->showCursor(toggled || !PlayLayer::get() || (PlayLayer::get() && MBO(bool, PlayLayer::get(), 0x2F17)) || (PlayLayer::get() && PlayLayer::get()->getChildByID("EndLevelLayer")));
 
 	// 🔥🔥🔥🔥
 	hideTimer = toggled ? -FLT_MAX : 0;
