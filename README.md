@@ -3,6 +3,8 @@
 # GD Mega Overlay
 [![Discord](https://img.shields.io/discord/1035900688737255425?label=discord&logo=discord)](https://discord.gg/nbDjEg7SSU)
 ![Downloads](https://img.shields.io/github/downloads/maxnut/GDMegaOverlay/total)
+
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/A0A5WR541)
 </div>
 
 ## Description

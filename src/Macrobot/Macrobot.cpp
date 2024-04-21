@@ -74,8 +74,13 @@ class $modify(PlayLayer)
 		if (checkpoints.contains(checkpoint) && playerMode != DISABLED && PlayLayer::get())
 		{
 			CheckpointData checkpointData = checkpoints[checkpoint];
-			const auto check = [&](const Action &action) -> bool { return action.frame > checkpointData.frame; };
-			macro.inputs.erase(std::remove_if (macro.inputs.begin(), macro.inputs.end(), check), macro.inputs.end());
+
+			if(playerMode == RECORDING)
+			{
+				const auto check = [&](const Action &action) -> bool { return action.frame > checkpointData.frame; };
+				macro.inputs.erase(std::remove_if (macro.inputs.begin(), macro.inputs.end(), check), macro.inputs.end());
+			}
+			
 			PlayLayer::loadFromCheckpoint(checkpoint);
 
 			*(int*)((char*)base::get() + 0x4F24A8) = checkpointData.randomSeed;
@@ -220,14 +225,16 @@ class $modify(GJBaseGameLayer)
 {
 	void update(float dt)
 	{
-		if (!Settings::get<bool>("macrobot/frame_step/enabled", false))
+		if (!Settings::get<bool>("macrobot/frame_step/enabled", false) || !PlayLayer::get())
 		{
 			GJBaseGameLayer::update(dt);
 			return;
 		}
 
+		float speedhack = Settings::get<bool>("general/speedhack/enabled") ? Settings::get<float>("general/speedhack/value") : 1.f;
+
 		if (Settings::get<bool>("macrobot/frame_step/hold", false) && holdingAdvance)
-			advanceHoldTime += dt;
+			advanceHoldTime += dt / speedhack;
 		else
 			advanceHoldTime = 0.0f;
 
@@ -311,14 +318,16 @@ void Macrobot::handleAction(Action& action)
 	FMOD::Sound* soundToPlay = nullptr;
 	FMOD::System* system = FMODAudioEngine::sharedEngine()->m_system;
 
+	Clickpack& clickpack = player1 ? Clickpacks::currentClickpack : Clickpacks::currentClickpackP2;
+
 	switch(button)
 	{
 		case 1:
-			soundToPlay = down ? (timeDifference <= softclickTime ? Clickpacks::currentClickpack.randomSoftClick() : Clickpacks::currentClickpack.randomClick()) : Clickpacks::currentClickpack.randomRelease();
+			soundToPlay = down ? (timeDifference <= softclickTime ? clickpack.randomSoftClick() : clickpack.randomClick()) : clickpack.randomRelease();
 			break;
 		case 2:
 		case 3:
-			soundToPlay = down ? Clickpacks::currentClickpack.randomPlatClick() : Clickpacks::currentClickpack.randomPlatRelease();
+			soundToPlay = down ? clickpack.randomPlatClick() : clickpack.randomPlatRelease();
 	}
 
 	timeForKey[button] = timestamp;
@@ -649,7 +658,7 @@ void Macrobot::drawWindow()
 			Common::calculateFramerate();
 			PhysicsBypass::calculateTickrate();
 			if (PlayLayer::get())
-				PlayLayer::get()->resetLevelFromStart();
+				PlayLayer::get()->resetLevel();
 		}
 		if (ImGui::RadioButton("Play", (int*)&Macrobot::playerMode, (int)PLAYBACK) && !clickBetweenFramesCheck())
 		{

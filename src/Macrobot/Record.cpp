@@ -422,7 +422,7 @@ void Recorder::handle_recording(GJBaseGameLayer *play_layer, float dt)
 	}
 }
 
-void Record::renderWindow()
+void Record::drawWindow()
 {
 	if(recorder.m_recording || recorder.m_recording_audio)
 	{

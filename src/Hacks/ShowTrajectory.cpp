@@ -83,6 +83,15 @@ class $modify(GameObject)
 
 class $modify(PlayerObject)
 {
+
+    void playSpiderDashEffect(cocos2d::CCPoint from, cocos2d::CCPoint to)
+    {
+        if(isSimulation)
+            return;
+
+        PlayerObject::playSpiderDashEffect(from, to);
+    }
+
     void update(float dt)
     {
         PlayerObject::update(dt);
@@ -192,6 +201,22 @@ void destroyPlayer(PlayerObject *p0, GameObject *p1)
     PlayLayer::destroyPlayer(p0, p1);
 }
 
+void incrementJumps()
+{
+    if(isSimulation)
+        return;
+    
+    PlayLayer::incrementJumps();
+}
+
+void playEndAnimationToPos(cocos2d::CCPoint p0)
+{
+    if(isSimulation)
+        return;
+    
+    PlayLayer::playEndAnimationToPos(p0);
+}
+
 void flipGravity(PlayerObject *p0, bool p1, bool p2)
 {
     if(isSimulation)
@@ -241,8 +266,17 @@ void ShowTrajectory::iterateForPlayer(PlayerObject* player, bool pressing, bool 
     simulationDead = false;
 
     bool iterAction = false;
+    
+    size_t iterations = 300;
+    float dt = frameDt;
+    
+    if(Settings::get<bool>("player/show_trajectory/performance_mode", false))
+    {
+        iterations /= 2;
+        dt *= 2.f;
+    }
 
-    for(int i = 0; i < ITERATIONS; i++)
+    for(int i = 0; i < iterations; i++)
     {
         CCPoint playerPrevPos = player->getPosition();
         
@@ -250,7 +284,7 @@ void ShowTrajectory::iterateForPlayer(PlayerObject* player, bool pressing, bool 
         //reinterpret_cast<void(__thiscall *)(PlayerObject *)>(base::get() + 0x2C8080)(player);
         resetCollisionLog(player);
         
-        PlayLayer::get()->checkCollisions(player, frameDt, false);
+        PlayLayer::get()->checkCollisions(player, dt, false);
 
         if(simulationDead)
             break;
@@ -262,9 +296,9 @@ void ShowTrajectory::iterateForPlayer(PlayerObject* player, bool pressing, bool 
             pressing ? player->pushButton(PlayerButton::Jump) : player->releaseButton(PlayerButton::Jump);
         }
 
-        player->update(frameDt);
-        player->updateSpecial(frameDt);
-        player->updateRotation(frameDt);
+        player->update(dt);
+        player->updateSpecial(dt);
+        player->updateRotation(dt);
 
         getDrawNode()->drawSegment(playerPrevPos, player->getPosition(), 0.65f, pressing ? ccColor4F(0.f, 1.f, 0.1f, 1.f) : ccColor4F(1.f, 0.f, 0.1f, 1.f));
     }

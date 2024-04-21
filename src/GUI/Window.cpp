@@ -66,8 +66,8 @@ void Window::draw()
 			dropShadow(Settings::get<float>("menu/box_shadow/size", 24.f), 255);
 
 		ImGui::SetWindowFontScale(Settings::get<float>("menu/ui_scale", 1.f));
-
-		if (ImGui::IsMouseDragging(0, 0.1f) && ImGui::IsWindowFocused())
+		
+		if (ImGui::IsMouseDragging(0, 0.1f) && (ImGui::IsWindowFocused() || ImGui::IsMouseHoveringRect(ImGui::GetWindowPos(), ImGui::GetWindowPos() + ImGui::GetWindowSize())))
 		{
 			position = ImGui::GetWindowPos();
 			size = ImGui::GetWindowSize();
@@ -97,7 +97,7 @@ void Window::draw()
 }
 
 //stole directly from imgui source
-void RenderWindowTitleBarContents(ImGuiWindow* window, const ImRect& title_bar_rect, const char* name, bool* p_open)
+void drawWindowTitleBarContents(ImGuiWindow* window, const ImRect& title_bar_rect, const char* name, bool* p_open)
 {
     ImGuiContext& g = *GImGui;
     ImGuiStyle& style = g.Style;
@@ -209,7 +209,7 @@ void Window::customTitlebar()
     if (g.Style.FrameBorderSize > 0.0f)
         draw_list->AddRect(min, max, ImGui::GetColorU32(ImGuiCol_Border), g.Style.FrameRounding, 0, g.Style.FrameBorderSize);
 
-	RenderWindowTitleBarContents(ImGui::GetCurrentWindow(), ImGui::GetCurrentWindow()->TitleBarRect(), ImGui::GetCurrentWindow()->Name, (bool*)0);
+	drawWindowTitleBarContents(ImGui::GetCurrentWindow(), ImGui::GetCurrentWindow()->TitleBarRect(), ImGui::GetCurrentWindow()->Name, (bool*)0);
 
 	draw_list->PopClipRect();
 }

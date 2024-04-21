@@ -484,7 +484,7 @@ void Labels::settingsForLabel(const std::string& labelSettingName, std::function
 	});
 }
 
-void Labels::renderWindow()
+void Labels::drawWindow()
 {
 	GUI::checkbox("Hide All", "labels/hideAll");
 	settingsForLabel("Cheat Indicator", [] {});

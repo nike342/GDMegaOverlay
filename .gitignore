@@ -49,3 +49,5 @@
 
 # clangd
 .cache/
+
+Auth.cpp

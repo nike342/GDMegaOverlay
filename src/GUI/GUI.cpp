@@ -131,7 +131,18 @@ void GUI::init()
 	auto fnt = ImGui::GetIO().Fonts->AddFontFromFileTTF(string::wideToUtf8((Mod::get()->getResourcesDir() / "arial.ttf").wstring()).c_str(), 14.f * uiSizeFactor);
 	ImGui::GetIO().FontDefault = fnt;
 	windowPositions = json::object();
-	GUI::loadStyle(Mod::get()->getResourcesDir() / "Style.style");
+	styleCombo = DirectoryCombo("Style", Mod::get()->getSaveDir() / "styles", "menu/style_path");
+
+	ghc::filesystem::path defaultStylePath = Mod::get()->getSaveDir() / "styles" / "default.style";
+
+	if(!ghc::filesystem::exists(defaultStylePath))
+		ghc::filesystem::copy(Mod::get()->getResourcesDir() / "Style.style", defaultStylePath);
+
+	std::string stylePath = Settings::get<std::string>("menu/style_path", string::wideToUtf8(defaultStylePath.wstring()));
+	if(stylePath.empty())
+		stylePath = string::wideToUtf8(defaultStylePath.wstring());
+	GUI::loadStyle(stylePath);
+
 	shortcuts.clear();
 	shadowTexture = cocos2d::CCTextureCache::get()->addImage(string::wideToUtf8((Mod::get()->getResourcesDir() / "shadow.png").wstring()).c_str(), true);
 	load();
@@ -158,7 +169,10 @@ void GUI::draw()
 		ac->step(ImGui::GetIO().DeltaTime);
 
 	for (Window& w : windows)
-		w.draw();
+	{
+		if(w.enabled)
+			w.draw();
+	}
 
 	float transitionDuration = Settings::get<float>("menu/transition_duration", 0.35f);
 
@@ -253,6 +267,7 @@ void GUI::addWindow(Window window)
 	}
 
 	windows.push_back(window);
+	windowReferences[window.name] = &windows.back();
 }
 
 void GUI::save()
@@ -284,8 +299,6 @@ void GUI::save()
 	f.close();
 
 	Mod::get()->saveData();
-
-	saveStyle(Mod::get()->getResourcesDir() / "Style.style");
 }
 
 void GUI::load()
@@ -378,6 +391,7 @@ void GUI::saveStyle(const ghc::filesystem::path& name)
 		styleFile.write((const char*)&loadedStyle, sizeof(ImGuiStyle));
 	styleFile.close();
 }
+
 void GUI::loadStyle(const ghc::filesystem::path& name)
 {
 	std::ifstream styleFile(name, std::ios::binary);

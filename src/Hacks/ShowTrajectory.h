@@ -18,8 +18,6 @@ namespace ShowTrajectory
 
     inline float frameDt = 0;
 
-    inline const int ITERATIONS = 300;
-
     cocos2d::CCDrawNode* getDrawNode();
 
     void createPlayers();

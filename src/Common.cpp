@@ -193,8 +193,9 @@ void Common::updateCheating()
 	bool hitboxMultiplier = Settings::get<bool>("level/hitbox_multiplier", false);
 	bool layoutMode = Settings::get<bool>("level/layout_mode", false);
 	bool showTrajectory = Settings::get<bool>("player/show_trajectory/enabled", false);
+	bool frameStepper = Settings::get<bool>("macrobot/frame_step/enabled", false);
 
-	if (speedhack != 1.f || Macrobot::playerMode == 0 || (showHitbox && !onDeath) || hidePause || hitboxMultiplier || noShaders || instantComplete || layoutMode || showTrajectory)
+	if (speedhack != 1.f || Macrobot::playerMode == 0 || (showHitbox && !onDeath) || hidePause || hitboxMultiplier || noShaders || instantComplete || layoutMode || showTrajectory || frameStepper)
 	{
 		isCheating = true;
 		return;
