@@ -60,11 +60,11 @@ class $modify(HardStreak)
 
 class $modify(EffectGameObject)
 {
-    bool triggerObject(GJBaseGameLayer *p0, int p1, const gd::vector<int> *p2)
+    void triggerObject(GJBaseGameLayer *p0, int p1, const gd::vector<int> *p2)
     {
         //log::debug("is simulation {}", isSimulation);
         if(isSimulation)
-            return true;
+            return;
         
         return EffectGameObject::triggerObject(p0, p1, p2);
     }
