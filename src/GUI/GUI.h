@@ -38,8 +38,11 @@ namespace GUI
 	inline float hideTimer = 0.0f;
 	inline float uiSizeFactor = 1.f;
 
+	inline float fontScale = 16.f;
+
 	inline ImGuiStyle loadedStyle;
 	inline DirectoryCombo styleCombo;
+	inline DirectoryCombo fontCombo;
 
 	inline cocos2d::CCTexture2D* shadowTexture = nullptr;
 
@@ -68,6 +71,8 @@ namespace GUI
 	void saveStyle(const ghc::filesystem::path& name);
 	void loadStyle(const ghc::filesystem::path& name);
 	void setStyle();
+
+	void setFont(const ghc::filesystem::path& font);
 
 	void drawStyleEditor();
 

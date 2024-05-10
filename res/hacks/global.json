@@ -30,7 +30,7 @@
         },
         {
             "description": "Disable the player's level ending animation.",
-            "name": "No Player Ending Animation",
+            "name": "No Ending Animation",
             "opcodes": [
                 {
                     "address": "0x2DECEC",

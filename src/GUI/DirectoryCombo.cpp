@@ -16,6 +16,10 @@ DirectoryCombo::DirectoryCombo(std::string name, ghc::filesystem::path directory
 
     ghc::filesystem::path targetPath = Settings::get<std::string>(m_settingName, "");
 
+    std::vector<std::string> files;
+    for (const auto& entry : ghc::filesystem::directory_iterator(m_directory))
+        files.push_back(string::wideToUtf8(entry.path().filename().wstring()));
+
     int i = 0;
     for (const auto& entry : ghc::filesystem::directory_iterator(m_directory))
     {
@@ -24,6 +28,8 @@ DirectoryCombo::DirectoryCombo(std::string name, ghc::filesystem::path directory
         
         i++;
     }
+
+    m_selectedFile = files.at(m_selectedIndex);
 }
 
 bool DirectoryCombo::draw()
@@ -73,6 +79,7 @@ void DirectoryCombo::setSelectedFilePath(ghc::filesystem::path path)
             m_selectedIndex = i;
             m_selectedFile = string::wideToUtf8(entry.path().filename().wstring());
             Mod::get()->setSavedValue<std::string>(m_settingName, string::wideToUtf8(getSelectedFilePath().wstring()));
+            Mod::get()->saveData();
         }
         
         i++;

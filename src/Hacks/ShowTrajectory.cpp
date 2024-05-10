@@ -111,6 +111,14 @@ class $modify(PlayerObject)
 class $modify(GJBaseGameLayer)
 {
 
+    bool canBeActivatedByPlayer(PlayerObject* p0, EffectGameObject* p1)
+    {
+        if(isSimulation)
+            return false;
+        
+        return GJBaseGameLayer::canBeActivatedByPlayer(p0, p1);
+    }
+
     void handleButton(bool p0, int p1, bool p2)
     {
         if(p2 && p1 == 1)
@@ -123,25 +131,28 @@ class $modify(GJBaseGameLayer)
 
     void collisionCheckObjects(PlayerObject* p0, gd::vector<GameObject*>* vec, int p2, float p3)
     {
-        gd::vector<GameObject*> extra;
-
         if (isSimulation) 
         {
+            gd::vector<GameObject*> extra = *vec;
+            
             auto new_end = std::remove_if(vec->begin(), vec->end(), [&](GameObject* p1) {
                 bool result = p1->m_objectType != GameObjectType::Solid &&
                             p1->m_objectType != GameObjectType::Hazard &&
                             p1->m_objectType != GameObjectType::AnimatedHazard &&
                             p1->m_objectType != GameObjectType::Slope;
-                if (result) extra.push_back(p1);
                 return result;
             });
+
             vec->erase(new_end, vec->end());
             p2 = vec->size();
+
+            GJBaseGameLayer::collisionCheckObjects(p0, vec, p2, p3);
+
+            *vec = extra;
+            return;
         }
 
         GJBaseGameLayer::collisionCheckObjects(p0, vec, p2, p3);
-
-        vec->insert(vec->end(), extra.begin(), extra.end());
     }
 
     void playerTouchedRing(PlayerObject* player, RingObject* ring)
@@ -314,6 +325,7 @@ void ShowTrajectory::simulationForPlayer(PlayerObject* player, PlayerObject* pla
     bool isPlayer2 = playerBase == PlayLayer::get()->m_player2;
 
     player->spawnFromPlayer(playerBase, false);
+    player->m_gravityMod = playerBase->m_gravityMod;
 
     if(isPlayer2 && p2Down || !isPlayer2 && p1Down)
         player->pushButton(PlayerButton::Jump);

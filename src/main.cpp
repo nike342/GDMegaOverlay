@@ -37,6 +37,8 @@ void init()
 		ghc::filesystem::create_directory(Mod::get()->getSaveDir() / "clickpacks");
 	if (!ghc::filesystem::exists(Mod::get()->getSaveDir() / "styles"))
 		ghc::filesystem::create_directory(Mod::get()->getSaveDir() / "styles");
+	if (!ghc::filesystem::exists(Mod::get()->getSaveDir() / "fonts"))
+		ghc::filesystem::create_directory(Mod::get()->getSaveDir() / "fonts");
 
 	JsonPatches::init();
 	DiscordRPCManager::init();
@@ -178,7 +180,7 @@ void initGUI()
 	GUI::addWindow(creatorWindow);
 
 	GUI::Window globalWindow("Global", [] {
-		if (GUI::checkbox("Discord Rich Presence", "general/discordrpc/enabled"))
+		if (GUI::checkbox("Discord RPC", "general/discordrpc/enabled"))
 			DiscordRPCManager::updateState();
 
 		GUI::arrowButton("Discord Rich Presence Settings");
@@ -213,6 +215,8 @@ void initGUI()
 					Mod::get()->setSavedValue<int>("level/startpos_switcher/right", key);
 			},
 			ImGuiWindowFlags_AlwaysAutoResize);
+
+		GUI::checkbox("Smart Startpos", "level/smart_startpos");
 		
 		GUI::checkbox("Show Hitboxes", "level/show_hitbox/enabled");
 		GUI::arrowButton("Show Hitboxes Settings");
@@ -269,7 +273,7 @@ void initGUI()
 
 		if (GUI::checkbox("Safe Mode", "level/safe_mode/enabled"))
 			SafeMode::updateState();
-		GUI::checkbox("Safe Mode Endscreen Label", "level/safe_mode/endscreen_enabled", true);
+		GUI::checkbox("Safe Mode Endscreen", "level/safe_mode/endscreen_enabled", true);
 		GUI::tooltip("Shows a label on the endscreen when safe mode is active.");
 
 		GUI::checkbox("Endscreen Info", "level/endlevellayerinfo/enabled", true);
@@ -277,9 +281,6 @@ void initGUI()
 
 		GUI::checkbox("Hide Pause Button", "general/hide_pause/button");
 		GUI::checkbox("Hide Pause Menu", "general/hide_pause/menu");
-
-		GUI::checkbox("No Shaders", "level/no_shaders");
-		GUI::tooltip("Disables shaders from rendering.");
 
 		GUI::checkbox("Instant Complete", "level/instant_complete");
 		GUI::tooltip("Completes any level when you play it.\nUsing Instant Complete can and will ban you from the leaderboards! Use with caution.");
@@ -441,7 +442,14 @@ void initGUI()
 			Mod::get()->setSavedValue<int>("menu/togglekey", togglekey);
 
 		if(GUI::styleCombo.draw())
+		{
 			GUI::loadStyle(GUI::styleCombo.getSelectedFilePath());
+			GUI::setFont(GUI::fontCombo.getSelectedFilePath());
+            ImGuiCocos::get().reloadFontTexture();
+		}
+
+		if(GUI::fontCombo.draw())
+			GUI::setFont(GUI::fontCombo.getSelectedFilePath());
 
 		if(GUI::shouldRender())
 			ImGui::InputText("Search", &GUI::searchBar);

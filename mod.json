@@ -3,7 +3,7 @@
 	"gd": {
 		"win": "2.204"
 	},
-	"version": "v2.10.1",
+	"version": "v2.11.0",
 	"id": "maxnu.gd_mega_overlay",
 	"name": "GD Mega Overlay",
 	"developers": ["maxnu", "SpaghettDev"],
@@ -13,7 +13,7 @@
 		"files": [
 			"res/hacks/*.json",
 			"res/Style.style",
-			"res/arial.ttf",
+			"res/Roboto-Regular.ttf",
 			"res/get_ffmpeg/*",
 			"res/default_windows.json",
 			"res/shadow.png"

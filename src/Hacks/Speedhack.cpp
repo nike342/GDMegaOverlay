@@ -1,4 +1,3 @@
-#include "Speedhack.h"
 #include "../Common.h"
 #include "../Macrobot/Macrobot.h"
 

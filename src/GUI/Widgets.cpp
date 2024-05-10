@@ -198,17 +198,13 @@ bool GUI::hotkey(const std::string& name, int* keyPointer, const ImVec2& size_ar
 
 bool GUI::modalPopup(const std::string& name, const std::function<void()>& popupFunction, int flags)
 {
-	if (!GUI::isVisible || ImGui::BeginPopupModal(name.c_str(), NULL, flags) || GUI::shortcutLoop)
+	bool open = true;
+	if (!GUI::isVisible || ImGui::BeginPopupModal(name.c_str(), &open, flags) || GUI::shortcutLoop)
 	{
 		popupFunction();
 
 		if (GUI::shouldRender())
-		{
-			if (ImGui::Button("Cancel"))
-				ImGui::CloseCurrentPopup();
-
 			ImGui::EndPopup();
-		}
 	}
 
 	return true;
@@ -368,7 +364,7 @@ bool GUI::inputFloat(const std::string& name, float* value, float min, float max
 	{
 		GUI::pushItemWidth(50);
 		result = handleSearch(name, [&]()->bool {
-			return ImGui::InputFloat(name.c_str(), value);
+			return ImGui::InputFloat(name.c_str(), value, 0, 0, "%.2f");
 		});
 		GUI::popItemWidth();
 	}
@@ -392,7 +388,31 @@ bool GUI::inputInt(const std::string& name, const std::string& setting, int defa
 	}
 
 	return result;
-}	
+}
+
+bool GUI::inputUInt(const std::string& name, uint32_t* value, uint32_t min, uint32_t max)
+{
+	bool result = false;
+	if (GUI::shouldRender())
+	{
+		GUI::pushItemWidth(50);
+		result = handleSearch(name, [&]()->bool {
+			std::string val = std::to_string(*value);
+			bool res = ImGui::InputText(name.c_str(), &val);
+			if(res)
+				*value = std::stoul(val);
+			return res;
+		});
+		GUI::popItemWidth();
+	}
+
+	if (*value < min)
+		*value = min;
+	if (*value > max)
+		*value = max;
+
+	return result;
+}
 
 bool GUI::inputFloat(const std::string& name, const std::string& setting, float defaultValue, float min, float max)
 {

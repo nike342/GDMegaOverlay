@@ -64,7 +64,7 @@ class $modify(PlayLayer)
 		setupLabel(
 			"Framerate",
 			[&](cocos2d::CCLabelBMFont* pointer) {
-			pointer->setString(std::to_string((int)ImGui::GetIO().Framerate).c_str());
+			pointer->setString(std::to_string((int)std::roundf(ImGui::GetIO().Framerate)).c_str());
 			},
 			this
 		);

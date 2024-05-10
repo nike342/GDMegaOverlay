@@ -163,7 +163,7 @@ void Common::updateCheating()
 	{
 		for(const auto& pair : group)
 		{
-			if (cheatOpcodes.contains(pair.second.patches[0]->getAddress() - base::get()) && pair.second.patches[0]->isEnabled())
+			if (pair.second.patches.size() > 0 && cheatOpcodes.contains(pair.second.patches[0]->getAddress() - base::get()) && pair.second.patches[0]->isEnabled())
 			{
 				isCheating = true;
 				return true;

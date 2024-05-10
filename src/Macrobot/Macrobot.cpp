@@ -14,6 +14,7 @@
 #include "Macrobot.h"
 #include "Clickpacks.h"
 #include "../Hacks/PhysicsBypass.h"
+#include "Macrobot/MacroEditor.h"
 
 #include <Geode/Geode.hpp>
 #include <Geode/modify/GJBaseGameLayer.hpp>
@@ -684,6 +685,21 @@ void Macrobot::drawWindow()
 			else
 				ImGui::Text("There are no macros to load! Create some macros first.");
 		});
+
+		if (GUI::button("Editor"))
+		{
+			if(macro.inputs.size() <= 0)
+			{
+				Common::showWithPriority(FLAlertLayer::create("Error", "No macro loaded!", "Ok"));
+				GUI::toggle();
+			}
+			else
+				ImGui::OpenPopup("Macro Editor");
+		}
+
+		GUI::modalPopup("Macro Editor", []{
+				MacroEditor::renderWindow();
+		}, 0);
 
 		int corrections = Settings::get<int>("macrobot/corrections");
 

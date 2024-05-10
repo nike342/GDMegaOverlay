@@ -1,6 +1,9 @@
 #include "GUI.h"
 #include "portable-file-dialogs.h"
 #include "Settings.hpp"
+#include "util.hpp"
+
+#include <imgui-cocos.hpp>
 
 using namespace geode::prelude;
 
@@ -60,6 +63,14 @@ void GUI::drawStyleEditor()
             ImGui::SliderFloat("IndentSpacing", &style.IndentSpacing, 0.0f, 30.0f, "%.0f");
             ImGui::SliderFloat("ScrollbarSize", &style.ScrollbarSize, 1.0f, 20.0f, "%.0f");
             ImGui::SliderFloat("GrabMinSize", &style.GrabMinSize, 1.0f, 20.0f, "%.0f");
+            ImGui::SliderFloat("FontScale", &GUI::fontScale, 10.0f, 40.0f, "%.2f");
+
+            if(ImGui::IsItemDeactivatedAfterEdit())
+            {
+                GUI::setFont(GUI::fontCombo.getSelectedFilePath());
+                ImGuiCocos::get().reloadFontTexture();
+            }
+
             ImGui::Text("Borders");
             ImGui::SliderFloat("WindowBorderSize", &style.WindowBorderSize, 0.0f, 1.0f, "%.0f");
             ImGui::SliderFloat("ChildBorderSize", &style.ChildBorderSize, 0.0f, 1.0f, "%.0f");
