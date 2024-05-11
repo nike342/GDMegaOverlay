@@ -445,7 +445,6 @@ void initGUI()
 		{
 			GUI::loadStyle(GUI::styleCombo.getSelectedFilePath());
 			GUI::setFont(GUI::fontCombo.getSelectedFilePath());
-            ImGuiCocos::get().reloadFontTexture();
 		}
 
 		if(GUI::fontCombo.draw())

@@ -68,7 +68,6 @@ void GUI::drawStyleEditor()
             if(ImGui::IsItemDeactivatedAfterEdit())
             {
                 GUI::setFont(GUI::fontCombo.getSelectedFilePath());
-                ImGuiCocos::get().reloadFontTexture();
             }
 
             ImGui::Text("Borders");

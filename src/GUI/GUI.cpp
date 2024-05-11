@@ -440,6 +440,7 @@ void GUI::setFont(const ghc::filesystem::path& font)
 {
 	ImFont* fnt = ImGui::GetIO().Fonts->AddFontFromFileTTF(string::wideToUtf8(font.wstring()).c_str(), fontScale * uiSizeFactor);
 	ImGui::GetIO().FontDefault = fnt;
+	ImGuiCocos::get().reloadFontTexture();
 }
 
 void GUI::setStyle()
